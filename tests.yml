@@ -1,0 +1,36 @@
+name: Tests
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: python -m pip install -r requirements-dev.txt
+      - run: python -m pytest --junitxml=reports/junit.xml
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-report
+          path: reports/junit.xml
+  docker-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t ai-quality-lab .
+      - run: docker run -d --name lab -p 127.0.0.1:8000:8000 ai-quality-lab
+      - name: Check health
+        run: curl --retry 15 --retry-connrefused --retry-delay 2 --fail http://127.0.0.1:8000/health
+      - name: Check persisted storage access
+        run: |
+          curl --fail -H "Content-Type: application/json" -d '{"asset_code":"CI-001","name":"CI asset","owner":"ci","sensitivity":"internal"}' http://127.0.0.1:8000/api/assets
+      - name: Container logs
+        if: always()
+        run: docker logs lab
