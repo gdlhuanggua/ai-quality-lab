@@ -1,6 +1,6 @@
 # 本地验证记录
 
-初次验证日期：2026-10-01。
+初次验证日期：2026-10-01；GitHub 发布核验日期：2026-10-02。
 
 ## 已运行
 
@@ -28,6 +28,7 @@
 ## 尚待验证
 
 - 当前电脑 Docker 引擎未运行，因此尚未本地构建镜像或运行容器。
-- 尚未向 GitHub 发布，远端 Actions 尚未运行。
+- GitHub 仓库已公开发布：<https://github.com/gdlhuanggua/ai-quality-lab>，默认分支为 `main`，许可证为 MIT。
+- GitHub Actions 最新运行的 `pytest` job 成功（94 条测试通过）；`docker-smoke` 的镜像构建和容器启动成功，但健康检查失败，不能视为 Docker 验证通过。
 - 尚未做真实模型生成与 Prompt 迭代实验。
 - 不包含公网部署、权限、性能和生产级安全验证。
